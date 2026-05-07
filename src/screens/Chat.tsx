@@ -128,7 +128,7 @@ export default function Chat({ tr, isOnline }: Props) {
 
       {/* Crisis card */}
       <AnimatePresence>
-        {phqScore >= 10 && <CrisisCard score={phqScore} tr={tr} />}
+        {phqScore >= 8 && <CrisisCard score={phqScore} tr={tr} />}
       </AnimatePresence>
 
       {/* Input */}

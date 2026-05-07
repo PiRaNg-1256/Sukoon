@@ -7,7 +7,7 @@ interface Props {
 }
 
 export default function CrisisCard({ score, tr }: Props) {
-  if (score < 10) return null
+  if (score < 8) return null
   const full = score >= 15
 
   return (
@@ -16,7 +16,7 @@ export default function CrisisCard({ score, tr }: Props) {
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: 80, opacity: 0 }}
       transition={{ type: 'spring', stiffness: 220, damping: 20 }}
-      className={`mx-4 mb-2 rounded-2xl p-4 shadow-lg ${
+      className={`fixed bottom-28 left-4 right-4 z-30 rounded-2xl p-4 shadow-lg ${
         full ? 'bg-danger/10 border border-danger/30' : 'bg-teal/10 border border-teal/20'
       }`}
     >
