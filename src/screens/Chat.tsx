@@ -146,6 +146,7 @@ export default function Chat({ tr, isOnline }: Props) {
           />
           <motion.button
             whileTap={{ scale: 0.88 }}
+            whileHover={input.trim() ? { scale: 1.08 } : {}}
             onClick={send}
             disabled={!input.trim() || loading || !isOnline}
             className="w-9 h-9 rounded-xl bg-teal flex items-center justify-center shrink-0 disabled:opacity-40"

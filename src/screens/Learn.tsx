@@ -110,6 +110,7 @@ export default function Learn({ lang, tr }: Props) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08 }}
               whileTap={{ scale: 0.95 }}
+              whileHover={{ y: -4, boxShadow: '0 12px 28px rgba(0,0,0,0.12)' }}
               onClick={() => setSelected(card)}
               className="rounded-2xl p-4 shadow-soft cursor-pointer"
               style={{ backgroundColor: card.color }}

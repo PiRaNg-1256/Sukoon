@@ -23,6 +23,7 @@ export default function BottomNav({ tr }: { tr: Tr }) {
           <motion.button
             key={path}
             whileTap={{ scale: 0.88 }}
+            whileHover={{ y: -2 }}
             onClick={() => navigate(path)}
             className="flex flex-col items-center justify-center flex-1 relative gap-0.5"
           >

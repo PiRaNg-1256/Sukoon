@@ -57,6 +57,7 @@ export default function Help({ tr }: Props) {
               </div>
               <motion.a
                 whileTap={{ scale: 0.93 }}
+                whileHover={{ scale: 1.05, backgroundColor: '#155d90' }}
                 href={`tel:${h.number}`}
                 className="bg-teal text-white font-semibold px-3 py-2 rounded-xl text-xs shrink-0"
               >

@@ -2,9 +2,9 @@ import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
 
 const variants = {
-  initial: { opacity: 0, x: 18 },
-  in:      { opacity: 1, x: 0  },
-  out:     { opacity: 0, x: -18 },
+  initial: { opacity: 0, y: 16 },
+  in:      { opacity: 1, y: 0  },
+  out:     { opacity: 0, y: -8 },
 }
 
 export default function PageTransition({ children }: { children: ReactNode }) {
