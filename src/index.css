@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Nunito', 'Noto Sans Devanagari', sans-serif;
+    background-color: #fdf6ec;
+    color: #1c1c1e;
+    overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(27, 108, 168, 0.3), 0 0 40px rgba(244, 165, 53, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(27, 108, 168, 0.55), 0 0 65px rgba(244, 165, 53, 0.3);
+  }
+}
+
+@keyframes bg-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+
+@keyframes sos-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+.manu-pulse {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.bg-gradient-anim {
+  background:
+    radial-gradient(ellipse at 25% 25%, rgba(27, 108, 168, 0.07) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 75%, rgba(244, 165, 53, 0.07) 0%, transparent 55%);
+  background-size: 200% 200%;
+  animation: bg-shift 60s ease-in-out infinite;
+}
+
+.sos-pulse {
+  animation: sos-pulse 1.4s ease-in-out infinite;
+}
