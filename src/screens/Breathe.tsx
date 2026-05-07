@@ -12,6 +12,16 @@ const PRESETS: Record<BreathPreset, { inhale: number; hold: number; exhale: numb
   calm:    { inhale: 4, hold: 0, exhale: 6 },
 }
 
+const PHASE_COLORS: Record<BreathPhase, { ring: string; text: string; glow: string }> = {
+  inhale: { ring: '#1B6CA8', text: '#1B6CA8', glow: 'rgba(27,108,168,0.4)' },
+  hold:   { ring: '#1A1B3A', text: '#1A1B3A', glow: 'rgba(26,27,58,0.4)'   },
+  exhale: { ring: '#F4A535', text: '#F4A535', glow: 'rgba(244,165,53,0.4)' },
+  idle:   { ring: '#1B6CA8', text: '#6B7280', glow: 'none'                 },
+}
+
+const OUTER_R = 118
+const CIRCUMFERENCE = 2 * Math.PI * OUTER_R
+
 const DURATIONS = [3, 5, 10] as const
 const DURATION_KEYS: TranslationKey[] = ['duration_3', 'duration_5', 'duration_10']
 
@@ -24,10 +34,12 @@ export default function Breathe({ tr }: Props) {
   const [phaseTimeLeft, setPhaseTimeLeft] = useState(0)
   const [sessionTimeLeft, setSessionTimeLeft] = useState(0)
   const [done, setDone] = useState(false)
+  const [dashOffset, setDashOffset] = useState(0)
 
   const phaseRef = useRef<BreathPhase>('idle')
   const presetRef = useRef<BreathPreset>('calm')
   const sessionRef = useRef(0)
+  const phaseTotalRef = useRef(0)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   phaseRef.current = phase
@@ -53,8 +65,10 @@ export default function Breathe({ tr }: Props) {
     sessionRef.current = total
     setSessionTimeLeft(total)
     const cfg = PRESETS[preset]
+    phaseTotalRef.current = cfg.inhale
     setPhase('inhale')
     setPhaseTimeLeft(cfg.inhale)
+    setDashOffset(CIRCUMFERENCE)
   }
 
   const stopSession = () => {
@@ -62,6 +76,7 @@ export default function Breathe({ tr }: Props) {
     setPhase('idle')
     setPhaseTimeLeft(0)
     setSessionTimeLeft(0)
+    setDashOffset(0)
   }
 
   useEffect(() => {
@@ -69,7 +84,6 @@ export default function Breathe({ tr }: Props) {
     clearTick()
 
     intervalRef.current = setInterval(() => {
-      // decrement session
       sessionRef.current -= 1
       setSessionTimeLeft(sessionRef.current)
 
@@ -77,6 +91,7 @@ export default function Breathe({ tr }: Props) {
         clearTick()
         setPhase('idle')
         setPhaseTimeLeft(0)
+        setDashOffset(0)
         setDone(true)
         storage.addBreatheEntry({
           date: new Date().toISOString().split('T')[0],
@@ -88,12 +103,19 @@ export default function Breathe({ tr }: Props) {
       }
 
       setPhaseTimeLeft(prev => {
-        if (prev <= 1) {
-          const next = getNextPhase(phaseRef.current, PRESETS[presetRef.current])
-          setPhase(next.phase)
-          return next.duration
+        const next = prev - 1
+        // update SVG ring progress
+        const progress = next / phaseTotalRef.current
+        setDashOffset(CIRCUMFERENCE * progress)
+
+        if (next <= 0) {
+          const nextPhase = getNextPhase(phaseRef.current, PRESETS[presetRef.current])
+          phaseTotalRef.current = nextPhase.duration
+          setPhase(nextPhase.phase)
+          setDashOffset(CIRCUMFERENCE)
+          return nextPhase.duration
         }
-        return prev - 1
+        return next
       })
     }, 1000)
 
@@ -106,6 +128,8 @@ export default function Breathe({ tr }: Props) {
     : phase === 'hold'   ? config.hold
     : phase === 'exhale' ? config.exhale
     : 0.4
+
+  const colors = PHASE_COLORS[phase]
 
   const phaseLabel =
     phase === 'inhale' ? tr('breathe_inhale') :
@@ -128,25 +152,57 @@ export default function Breathe({ tr }: Props) {
         {/* Breathing circle */}
         <div className="flex items-center justify-center mb-8">
           <div className="relative flex items-center justify-center" style={{ width: 256, height: 256 }}>
+            {/* SVG progress ring */}
+            <svg
+              width={256}
+              height={256}
+              style={{
+                position: 'absolute',
+                inset: 0,
+                transform: 'rotate(-90deg)',
+                filter: phase !== 'idle' ? `drop-shadow(0 0 12px ${colors.glow})` : 'none',
+              }}
+            >
+              {/* track */}
+              <circle
+                cx={128} cy={128} r={OUTER_R}
+                fill="none"
+                stroke="rgba(0,0,0,0.06)"
+                strokeWidth={4}
+              />
+              {/* progress */}
+              <motion.circle
+                cx={128} cy={128} r={OUTER_R}
+                fill="none"
+                stroke={colors.ring}
+                strokeWidth={4}
+                strokeLinecap="round"
+                strokeDasharray={CIRCUMFERENCE}
+                animate={{ strokeDashoffset: dashOffset, stroke: colors.ring }}
+                transition={{ duration: 1, ease: 'linear' }}
+              />
+            </svg>
+
+            {/* Inner animated rings */}
             <motion.div
               animate={{ scale: circleScale }}
               transition={{ duration: cycleDuration, ease: 'easeInOut' }}
-              className="absolute rounded-full bg-teal opacity-10"
-              style={{ width: 240, height: 240 }}
+              className="absolute rounded-full opacity-10"
+              style={{ width: 200, height: 200, background: colors.ring }}
             />
             <motion.div
               animate={{ scale: circleScale }}
               transition={{ duration: cycleDuration, ease: 'easeInOut', delay: 0.04 }}
-              className="absolute rounded-full bg-teal opacity-20"
-              style={{ width: 200, height: 200 }}
+              className="absolute rounded-full opacity-20"
+              style={{ width: 168, height: 168, background: colors.ring }}
             />
             <motion.div
               animate={{ scale: circleScale }}
               transition={{ duration: cycleDuration, ease: 'easeInOut', delay: 0.08 }}
               className="absolute rounded-full opacity-60"
               style={{
-                width: 160, height: 160,
-                background: 'linear-gradient(135deg, #1B6CA8 0%, #F4A535 100%)',
+                width: 136, height: 136,
+                background: `linear-gradient(135deg, ${colors.ring} 0%, ${phase === 'exhale' ? '#1B6CA8' : '#F4A535'} 100%)`,
               }}
             />
             <div className="relative z-10">
@@ -166,7 +222,7 @@ export default function Breathe({ tr }: Props) {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.2 }}
               >
-                <p className="text-2xl font-extrabold text-dark-indigo">{phaseLabel}</p>
+                <p className="text-3xl font-extrabold" style={{ color: colors.text }}>{phaseLabel}</p>
                 <p className="text-muted text-sm">{phaseTimeLeft}s</p>
               </motion.div>
             )}
@@ -238,6 +294,7 @@ export default function Breathe({ tr }: Props) {
           {phase === 'idle' ? (
             <motion.button
               whileTap={{ scale: 0.93 }}
+              whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(27,108,168,0.5)' }}
               onClick={startSession}
               className="bg-teal text-white font-bold text-lg px-10 py-4 rounded-2xl shadow-glow"
             >
