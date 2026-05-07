@@ -73,17 +73,36 @@ export default function Home({ lang, tr }: Props) {
       <div className="px-4 pt-8 pb-4">
         {/* Greeting + Manu */}
         <div className="flex flex-col items-center mb-6">
-          <animated.div style={manuSpring}>
-            <ManuOrb mood={selectedMood} size={110} pulse />
-          </animated.div>
-          <h1 className="mt-4 text-2xl font-extrabold text-dark-indigo">{getGreeting(tr)}</h1>
+          {/* Radial glow behind orb */}
+          <div className="relative flex items-center justify-center">
+            <div
+              className="absolute rounded-full pointer-events-none"
+              style={{
+                width: 200,
+                height: 200,
+                background: 'radial-gradient(circle, rgba(27,108,168,0.12) 0%, transparent 70%)',
+              }}
+            />
+            <animated.div style={manuSpring}>
+              <ManuOrb mood={selectedMood} size={140} pulse />
+            </animated.div>
+          </div>
+          <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-dark-indigo">
+            {getGreeting(tr)}
+          </h1>
           {streak.current > 0 && (
-            <p className="text-sm text-muted mt-1">🔥 {streak.current} {tr('streak')}</p>
+            <span className="bg-saffron/15 text-saffron font-bold px-3 py-1 rounded-full text-sm mt-2">
+              🔥 {streak.current} {tr('streak')}
+            </span>
           )}
         </div>
 
         {/* Mood check-in */}
-        <div className="bg-white rounded-2xl p-4 shadow-soft mb-4">
+        <motion.div
+          whileHover={{ y: -3, boxShadow: '0 8px 24px rgba(0,0,0,0.10)' }}
+          transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+          className="bg-white rounded-2xl p-4 shadow-soft mb-4"
+        >
           <p className="text-center text-muted text-sm mb-3">{tr('mood_question')}</p>
           <div className="flex justify-between gap-1">
             {MOODS.map((m, i) => (
@@ -92,28 +111,30 @@ export default function Home({ lang, tr }: Props) {
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.08, duration: 0.3 }}
-                whileTap={{ scale: 0.9 }}
+                whileTap={{ scale: 0.85 }}
+                whileHover={{ scale: 1.08 }}
                 onClick={() => handleMoodSelect(m.key)}
                 className={`flex flex-col items-center p-2 rounded-xl flex-1 transition-all duration-200 ${
                   selectedMood === m.key
-                    ? 'bg-teal/10 ring-2 ring-teal'
+                    ? 'bg-teal/10 ring-2 ring-teal ring-offset-2'
                     : 'hover:bg-gray-50'
                 }`}
               >
-                <span className="text-3xl leading-none">{m.emoji}</span>
+                <span className="text-4xl leading-none">{m.emoji}</span>
                 <span className="text-[10px] text-muted mt-1 text-center leading-tight">
                   {tr(m.labelKey)}
                 </span>
               </motion.button>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* Daily prompt */}
         <motion.div
           initial={{ opacity: 0, y: 32 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
+          whileHover={{ y: -3, boxShadow: '0 8px 24px rgba(0,0,0,0.10)' }}
           className="bg-white rounded-2xl p-4 shadow-soft mb-4"
         >
           <p className="text-xs font-bold text-saffron uppercase tracking-wider mb-2">
@@ -138,6 +159,7 @@ export default function Home({ lang, tr }: Props) {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.45 + i * 0.08 }}
               whileTap={{ scale: 0.93 }}
+              whileHover={{ scale: 1.04, backgroundColor: 'rgba(27,108,168,0.05)' }}
               onClick={() => navigate(item.path)}
               className="flex flex-col items-center justify-center w-28 h-24 bg-white rounded-2xl shadow-soft shrink-0"
             >
