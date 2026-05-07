@@ -8,6 +8,7 @@ import Chat from './screens/Chat'
 import Breathe from './screens/Breathe'
 import Learn from './screens/Learn'
 import Help from './screens/Help'
+import Splash from './screens/Splash'
 import { storage } from './lib/storage'
 import { t } from './translations'
 import type { Lang } from './types'
@@ -67,9 +68,15 @@ function AppShell() {
 }
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(() => !storage.hasSplashSeen())
+
   return (
     <BrowserRouter>
-      <AppShell />
+      <AnimatePresence mode="wait">
+        {showSplash
+          ? <Splash key="splash" onDone={() => setShowSplash(false)} />
+          : <AppShell key="shell" />}
+      </AnimatePresence>
     </BrowserRouter>
   )
 }
