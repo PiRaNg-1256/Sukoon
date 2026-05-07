@@ -15,6 +15,7 @@ export default {
       },
       fontFamily: {
         nunito: ['Nunito', 'Noto Sans Devanagari', 'sans-serif'],
+        dancing: ['Dancing Script', 'cursive'],
       },
       boxShadow: {
         soft: '0 2px 16px rgba(0,0,0,0.06)',

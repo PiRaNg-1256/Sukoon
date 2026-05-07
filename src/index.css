@@ -19,11 +19,21 @@
 
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(27, 108, 168, 0.3), 0 0 40px rgba(244, 165, 53, 0.15);
+    box-shadow:
+      0 0 0 3px rgba(244, 165, 53, 0.2),
+      0 8px 24px rgba(27, 108, 168, 0.3);
   }
   50% {
-    box-shadow: 0 0 35px rgba(27, 108, 168, 0.55), 0 0 65px rgba(244, 165, 53, 0.3);
+    box-shadow:
+      0 0 0 5px rgba(244, 165, 53, 0.4),
+      0 8px 40px rgba(27, 108, 168, 0.6);
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .manu-pulse { animation: none; }
+  .bg-gradient-anim { animation: none; }
+  .sos-pulse { animation: none; }
 }
 
 @keyframes bg-shift {

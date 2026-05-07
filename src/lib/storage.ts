@@ -6,6 +6,7 @@ const KEYS = {
   BREATHE_LOG: 'sukoon_breathe_log',
   STREAK: 'sukoon_streak',
   LANG: 'sukoon_lang',
+  SPLASH: 'sukoon_seen_splash',
 } as const
 
 function get<T>(key: string, fallback: T): T {
@@ -72,4 +73,7 @@ export const storage = {
 
   getLang: (): Lang => get(KEYS.LANG, 'hi'),
   setLang: (lang: Lang): void => set(KEYS.LANG, lang),
+
+  hasSplashSeen: (): boolean => !!localStorage.getItem(KEYS.SPLASH),
+  markSplashSeen: (): void => { try { localStorage.setItem(KEYS.SPLASH, '1') } catch { /* ignore */ } },
 }
