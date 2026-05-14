@@ -5,6 +5,7 @@ import { useSpring, animated } from '@react-spring/web'
 import PageTransition from '../components/PageTransition'
 import ManuOrb from '../components/ManuOrb'
 import { storage } from '../lib/storage'
+import { checkAndUnlockBadges } from '../lib/badges'
 import type { Lang, Mood } from '../types'
 import type { Tr, TranslationKey } from '../translations'
 
@@ -44,6 +45,16 @@ function getGreeting(tr: Tr): string {
   return tr('night')
 }
 
+const card: React.CSSProperties = {
+  background: 'rgba(255,255,255,0.06)',
+  border: '1px solid rgba(255,255,255,0.08)',
+  backdropFilter: 'blur(12px)',
+  WebkitBackdropFilter: 'blur(12px)',
+  borderRadius: 16,
+  padding: 16,
+  marginBottom: 12,
+}
+
 interface Props { lang: Lang; tr: Tr }
 
 export default function Home({ lang, tr }: Props) {
@@ -62,36 +73,46 @@ export default function Home({ lang, tr }: Props) {
 
   const handleMoodSelect = (mood: Mood) => {
     setSelectedMood(mood)
-    storage.addMood({ date: new Date().toISOString().split('T')[0], mood, timestamp: Date.now() })
-    storage.updateStreak()
+    const date = new Date().toISOString().split('T')[0]
+    storage.addMood({ date, mood, timestamp: Date.now() })
+    const streak = storage.updateStreak()
+    checkAndUnlockBadges({
+      moodLog: storage.getMoodLog(),
+      streak,
+      breatheCount: storage.getBreatheCount(),
+      meditateCount: storage.getMeditateCount(),
+      groundCount: storage.getGroundCount(),
+      chatCount: storage.getChatCount(),
+    })
   }
 
   const streak = storage.getStreak()
 
   return (
     <PageTransition>
-      <div className="px-4 pt-8 pb-4">
-        {/* Greeting + Manu */}
+      <div className="px-4 pt-8 pb-24">
+        {/* Orb + greeting */}
         <div className="flex flex-col items-center mb-6">
-          {/* Radial glow behind orb */}
           <div className="relative flex items-center justify-center">
             <div
               className="absolute rounded-full pointer-events-none"
               style={{
-                width: 200,
-                height: 200,
-                background: 'radial-gradient(circle, rgba(27,108,168,0.12) 0%, transparent 70%)',
+                width: 220, height: 220,
+                background: 'radial-gradient(circle, rgba(124,58,237,0.18) 0%, transparent 70%)',
               }}
             />
             <animated.div style={manuSpring}>
               <ManuOrb mood={selectedMood} size={140} pulse />
             </animated.div>
           </div>
-          <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-dark-indigo">
+          <h1 className="mt-4 text-3xl font-extrabold tracking-tight" style={{ color: 'var(--cn-text)' }}>
             {getGreeting(tr)}
           </h1>
           {streak.current > 0 && (
-            <span className="bg-saffron/15 text-saffron font-bold px-3 py-1 rounded-full text-sm mt-2">
+            <span
+              className="font-bold px-3 py-1 rounded-full text-sm mt-2"
+              style={{ background: 'rgba(245,158,11,0.15)', color: '#f59e0b' }}
+            >
               🔥 {streak.current} {tr('streak')}
             </span>
           )}
@@ -99,11 +120,13 @@ export default function Home({ lang, tr }: Props) {
 
         {/* Mood check-in */}
         <motion.div
-          whileHover={{ y: -3, boxShadow: '0 8px 24px rgba(0,0,0,0.10)' }}
+          whileHover={{ y: -3 }}
           transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-          className="bg-white rounded-2xl p-4 shadow-soft mb-4"
+          style={card}
         >
-          <p className="text-center text-muted text-sm mb-3">{tr('mood_question')}</p>
+          <p className="text-center text-sm mb-3" style={{ color: 'var(--cn-muted)' }}>
+            {tr('mood_question')}
+          </p>
           <div className="flex justify-between gap-1">
             {MOODS.map((m, i) => (
               <motion.button
@@ -114,14 +137,14 @@ export default function Home({ lang, tr }: Props) {
                 whileTap={{ scale: 0.85 }}
                 whileHover={{ scale: 1.08 }}
                 onClick={() => handleMoodSelect(m.key)}
-                className={`flex flex-col items-center p-2 rounded-xl flex-1 transition-all duration-200 ${
-                  selectedMood === m.key
-                    ? 'bg-teal/10 ring-2 ring-teal ring-offset-2'
-                    : 'hover:bg-gray-50'
-                }`}
+                className="flex flex-col items-center p-2 rounded-xl flex-1 transition-all duration-200"
+                style={{
+                  background: selectedMood === m.key ? 'rgba(124,58,237,0.2)' : 'transparent',
+                  outline: selectedMood === m.key ? '2px solid rgba(124,58,237,0.6)' : 'none',
+                }}
               >
                 <span className="text-4xl leading-none">{m.emoji}</span>
-                <span className="text-[10px] text-muted mt-1 text-center leading-tight">
+                <span className="text-[10px] mt-1 text-center leading-tight" style={{ color: 'var(--cn-muted)' }}>
                   {tr(m.labelKey)}
                 </span>
               </motion.button>
@@ -134,17 +157,17 @@ export default function Home({ lang, tr }: Props) {
           initial={{ opacity: 0, y: 32 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
-          whileHover={{ y: -3, boxShadow: '0 8px 24px rgba(0,0,0,0.10)' }}
-          className="bg-white rounded-2xl p-4 shadow-soft mb-4"
+          whileHover={{ y: -3 }}
+          style={card}
         >
-          <p className="text-xs font-bold text-saffron uppercase tracking-wider mb-2">
+          <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#f59e0b' }}>
             {tr('daily_prompt')}
           </p>
-          <p className="text-dark-indigo font-semibold leading-snug">{prompt}</p>
+          <p className="font-semibold leading-snug" style={{ color: 'var(--cn-text)' }}>{prompt}</p>
         </motion.div>
 
         {/* Quick access */}
-        <p className="text-xs font-bold text-muted uppercase tracking-wider mb-2 px-1">
+        <p className="text-xs font-bold uppercase tracking-wider mb-2 px-1" style={{ color: 'var(--cn-muted)' }}>
           {tr('quick_access')}
         </p>
         <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1">
@@ -159,18 +182,23 @@ export default function Home({ lang, tr }: Props) {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.45 + i * 0.08 }}
               whileTap={{ scale: 0.93 }}
-              whileHover={{ scale: 1.04, backgroundColor: 'rgba(27,108,168,0.05)' }}
+              whileHover={{ scale: 1.04 }}
               onClick={() => navigate(item.path)}
-              className="flex flex-col items-center justify-center w-28 h-24 bg-white rounded-2xl shadow-soft shrink-0"
+              className="flex flex-col items-center justify-center w-28 h-24 rounded-2xl shrink-0"
+              style={{
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                backdropFilter: 'blur(12px)',
+              }}
             >
               <span className="text-3xl mb-1">{item.emoji}</span>
-              <span className="text-sm font-semibold text-dark-indigo">{tr(item.key)}</span>
+              <span className="text-sm font-semibold" style={{ color: 'var(--cn-text)' }}>{tr(item.key)}</span>
             </motion.button>
           ))}
         </div>
 
         {/* Privacy note */}
-        <p className="text-center text-xs text-muted mt-6 px-4 leading-relaxed">
+        <p className="text-center text-xs mt-6 px-4 leading-relaxed" style={{ color: 'var(--cn-muted)' }}>
           {tr('privacy_note')}
         </p>
       </div>

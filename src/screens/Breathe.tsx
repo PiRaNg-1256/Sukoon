@@ -144,8 +144,8 @@ export default function Breathe({ tr }: Props) {
 
   return (
     <PageTransition>
-      <div className="px-4 pt-8">
-        <h1 className="text-2xl font-extrabold text-dark-indigo mb-6 text-center">
+      <div className="px-4 pt-8 pb-24">
+        <h1 className="text-2xl font-extrabold mb-6 text-center" style={{ color: 'var(--cn-text)' }}>
           {tr('breathe_title')}
         </h1>
 
@@ -223,12 +223,12 @@ export default function Breathe({ tr }: Props) {
                 transition={{ duration: 0.2 }}
               >
                 <p className="text-3xl font-extrabold" style={{ color: colors.text }}>{phaseLabel}</p>
-                <p className="text-muted text-sm">{phaseTimeLeft}s</p>
+                <p className="text-sm" style={{ color: 'var(--cn-muted)' }}>{phaseTimeLeft}s</p>
               </motion.div>
             )}
           </AnimatePresence>
           {phase === 'idle' && !done && (
-            <p className="text-muted text-sm pt-3">
+            <p className="text-sm pt-3" style={{ color: 'var(--cn-muted)' }}>
               {config.inhale}s — {config.hold > 0 ? `${config.hold}s — ` : ''}{config.exhale}s
             </p>
           )}
@@ -248,7 +248,7 @@ export default function Breathe({ tr }: Props) {
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
-              className="text-center font-bold text-teal text-lg mb-4"
+              className="text-center font-bold text-lg mb-4" style={{ color: '#22c55e' }}
             >
               {tr('breathe_done')}
             </motion.p>
@@ -264,9 +264,10 @@ export default function Breathe({ tr }: Props) {
                   key={key}
                   whileTap={{ scale: 0.93 }}
                   onClick={() => setPreset(key)}
-                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
-                    preset === key ? 'bg-teal text-white' : 'bg-white text-muted shadow-soft'
-                  }`}
+                  className="px-4 py-2 rounded-full text-sm font-semibold transition-all"
+                  style={preset === key
+                    ? { background: '#7c3aed', color: 'white' }
+                    : { background: 'rgba(255,255,255,0.07)', color: 'var(--cn-muted)', border: '1px solid rgba(255,255,255,0.08)' }}
                 >
                   {tr(labelKey)}
                 </motion.button>
@@ -278,9 +279,10 @@ export default function Breathe({ tr }: Props) {
                   key={d}
                   whileTap={{ scale: 0.93 }}
                   onClick={() => setDurationMin(d)}
-                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
-                    durationMin === d ? 'bg-saffron text-white' : 'bg-white text-muted shadow-soft'
-                  }`}
+                  className="px-4 py-2 rounded-full text-sm font-semibold transition-all"
+                  style={durationMin === d
+                    ? { background: '#f59e0b', color: 'white' }
+                    : { background: 'rgba(255,255,255,0.07)', color: 'var(--cn-muted)', border: '1px solid rgba(255,255,255,0.08)' }}
                 >
                   {tr(DURATION_KEYS[i])}
                 </motion.button>
@@ -294,9 +296,10 @@ export default function Breathe({ tr }: Props) {
           {phase === 'idle' ? (
             <motion.button
               whileTap={{ scale: 0.93 }}
-              whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(27,108,168,0.5)' }}
+              whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(124,58,237,0.6)' }}
               onClick={startSession}
-              className="bg-teal text-white font-bold text-lg px-10 py-4 rounded-2xl shadow-glow"
+              className="font-bold text-lg px-10 py-4 rounded-2xl text-white"
+              style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)', boxShadow: '0 0 20px rgba(124,58,237,0.4)' }}
             >
               {tr('breathe_start')}
             </motion.button>
@@ -304,7 +307,8 @@ export default function Breathe({ tr }: Props) {
             <motion.button
               whileTap={{ scale: 0.93 }}
               onClick={stopSession}
-              className="bg-white text-danger font-semibold px-8 py-3 rounded-2xl shadow-soft border border-danger/20"
+              className="font-semibold px-8 py-3 rounded-2xl"
+              style={{ background: 'rgba(239,68,68,0.12)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)' }}
             >
               {tr('breathe_stop')}
             </motion.button>
