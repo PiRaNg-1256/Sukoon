@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --cn-bg:           #080b18;
+  --cn-surface:      rgba(255, 255, 255, 0.06);
+  --cn-surface-hov:  rgba(255, 255, 255, 0.10);
+  --cn-border:       rgba(255, 255, 255, 0.08);
+  --cn-violet:       #7c3aed;
+  --cn-violet-dim:   rgba(124, 58, 237, 0.35);
+  --cn-violet-glow:  rgba(124, 58, 237, 0.55);
+  --cn-gold:         #f59e0b;
+  --cn-gold-dim:     rgba(245, 158, 11, 0.35);
+  --cn-teal:         #0ea5e9;
+  --cn-teal-dim:     rgba(14, 165, 233, 0.35);
+  --cn-text:         #e2e8f0;
+  --cn-muted:        rgba(226, 232, 240, 0.5);
+  --cn-danger:       #ef4444;
+  --cn-success:      #22c55e;
+}
+
 @layer base {
   * {
     -webkit-tap-highlight-color: transparent;
@@ -10,40 +28,66 @@
 
   body {
     font-family: 'Nunito', 'Noto Sans Devanagari', sans-serif;
-    background-color: #fdf6ec;
-    color: #1c1c1e;
+    background-color: var(--cn-bg);
+    color: var(--cn-text);
     overscroll-behavior: none;
     -webkit-font-smoothing: antialiased;
   }
 }
 
+/* ── Glass card ── */
+.cn-card {
+  background: var(--cn-surface);
+  border: 1px solid var(--cn-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 1rem;
+}
+
+/* ── Pulse glow on orb ── */
 @keyframes pulse-glow {
   0%, 100% {
     box-shadow:
-      0 0 0 3px rgba(244, 165, 53, 0.2),
-      0 8px 24px rgba(27, 108, 168, 0.3);
+      0 0 0 3px rgba(124, 58, 237, 0.2),
+      0 8px 24px rgba(124, 58, 237, 0.3);
   }
   50% {
     box-shadow:
-      0 0 0 5px rgba(244, 165, 53, 0.4),
-      0 8px 40px rgba(27, 108, 168, 0.6);
+      0 0 0 6px rgba(124, 58, 237, 0.35),
+      0 8px 40px rgba(124, 58, 237, 0.6);
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .manu-pulse { animation: none; }
-  .bg-gradient-anim { animation: none; }
-  .sos-pulse { animation: none; }
+/* ── Plasma ring spin ── */
+@keyframes spin-cw {
+  to { transform: rotate(360deg); }
+}
+@keyframes spin-ccw {
+  to { transform: rotate(-360deg); }
 }
 
+/* ── Breathe scale ── */
+@keyframes orb-breathe {
+  0%, 100% { transform: scale(1.0); }
+  50%       { transform: scale(1.05); }
+}
+
+/* ── Ambient bg shift ── */
 @keyframes bg-shift {
   0%, 100% { background-position: 0% 50%; }
   50%       { background-position: 100% 50%; }
 }
 
+/* ── SOS pulse ── */
 @keyframes sos-pulse {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.6; }
+}
+
+/* ── Star twinkle ── */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
 }
 
 .manu-pulse {
@@ -52,12 +96,18 @@
 
 .bg-gradient-anim {
   background:
-    radial-gradient(ellipse at 25% 25%, rgba(27, 108, 168, 0.07) 0%, transparent 55%),
-    radial-gradient(ellipse at 75% 75%, rgba(244, 165, 53, 0.07) 0%, transparent 55%);
+    radial-gradient(ellipse at 25% 25%, rgba(124, 58, 237, 0.06) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 75%, rgba(245, 158, 11, 0.06) 0%, transparent 55%);
   background-size: 200% 200%;
   animation: bg-shift 60s ease-in-out infinite;
 }
 
 .sos-pulse {
   animation: sos-pulse 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .manu-pulse { animation: none; }
+  .bg-gradient-anim { animation: none; }
+  .sos-pulse { animation: none; }
 }

@@ -7,6 +7,7 @@ export interface MoodEntry {
   date: string
   mood: Mood
   timestamp: number
+  note?: string
 }
 
 export interface ChatMessage {
@@ -25,4 +26,12 @@ export interface Streak {
   current: number
   longest: number
   lastDate: string
+}
+
+export interface Badge {
+  id: string
+  emoji: string
+  name: string
+  description: string
+  unlockedAt?: number
 }

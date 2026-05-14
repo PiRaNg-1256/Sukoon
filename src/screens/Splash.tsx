@@ -1,7 +1,6 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import Logo from '../components/Logo'
-import { storage } from '../lib/storage'
 
 interface Props {
   onDone: () => void
@@ -9,17 +8,26 @@ interface Props {
 
 export default function Splash({ onDone }: Props) {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [videoReady, setVideoReady] = useState(false)
+  const videoRef = useRef<HTMLVideoElement | null>(null)
 
-  useEffect(() => {
-    storage.markSplashSeen()
-    timerRef.current = setTimeout(onDone, 7000)
-    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
-  }, [onDone])
-
-  const handleEnded = () => {
+  const done = () => {
     if (timerRef.current) clearTimeout(timerRef.current)
     onDone()
   }
+
+  useEffect(() => {
+    // 8-second hard timeout — never transition mid-video, just skip if too slow
+    timerRef.current = setTimeout(done, 8000)
+    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleCanPlay = () => {
+    setVideoReady(true)
+    videoRef.current?.play().catch(() => {/* autoplay blocked — timeout will fire */})
+  }
+
+  const handleEnded = () => done()
 
   return (
     <motion.div
@@ -31,15 +39,35 @@ export default function Splash({ onDone }: Props) {
         position: 'fixed',
         inset: 0,
         zIndex: 100,
-        background: '#0a101e',
+        background: '#000',
         overflow: 'hidden',
       }}
     >
-      {/* Video background */}
+      {/* Black + logo shown immediately while video loads */}
+      <motion.div
+        animate={{ opacity: videoReady ? 0 : 1 }}
+        transition={{ duration: 0.5 }}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: '#000',
+          zIndex: 2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          pointerEvents: 'none',
+        }}
+      >
+        <Logo size="lg" color="white" />
+      </motion.div>
+
+      {/* Video — preload auto + fetchpriority high */}
       <video
-        autoPlay
+        ref={videoRef}
         muted
         playsInline
+        preload="auto"
+        onCanPlayThrough={handleCanPlay}
         onEnded={handleEnded}
         style={{
           position: 'absolute',
@@ -47,9 +75,11 @@ export default function Splash({ onDone }: Props) {
           width: '100%',
           height: '100%',
           objectFit: 'cover',
+          zIndex: 1,
         }}
       >
-        <source src="/splash.mp4" type="video/mp4" />
+        {/* @ts-expect-error fetchpriority is valid HTML but not in TS types yet */}
+        <source src="/splash.mp4" type="video/mp4" fetchpriority="high" />
       </video>
 
       {/* Gradient overlay */}
@@ -57,15 +87,17 @@ export default function Splash({ onDone }: Props) {
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(to top, rgba(10,16,30,0.75) 0%, transparent 100%)',
+          background: 'linear-gradient(to top, rgba(8,11,24,0.85) 0%, transparent 100%)',
+          zIndex: 3,
+          pointerEvents: 'none',
         }}
       />
 
       {/* Logo + tagline — bottom third */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.8, ease: 'easeOut' }}
+        animate={{ opacity: videoReady ? 1 : 0, y: videoReady ? 0 : 20 }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
         style={{
           position: 'absolute',
           bottom: '15%',
@@ -75,6 +107,7 @@ export default function Splash({ onDone }: Props) {
           flexDirection: 'column',
           alignItems: 'center',
           gap: 12,
+          zIndex: 4,
         }}
       >
         <Logo size="lg" color="white" />

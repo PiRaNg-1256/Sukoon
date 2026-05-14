@@ -3,12 +3,17 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import BottomNav from './components/BottomNav'
 import LangToggle from './components/LangToggle'
+import StarField from './components/StarField'
 import Home from './screens/Home'
 import Chat from './screens/Chat'
 import Breathe from './screens/Breathe'
 import Learn from './screens/Learn'
 import Help from './screens/Help'
 import Splash from './screens/Splash'
+import Meditate from './screens/Meditate'
+import Journal from './screens/Journal'
+import Ground from './screens/Ground'
+import Badges from './screens/Badges'
 import { storage } from './lib/storage'
 import { t } from './translations'
 import type { Lang } from './types'
@@ -34,13 +39,12 @@ function AppShell() {
   const tr: Tr = key => t[lang][key] as string
 
   return (
-    <div className="min-h-screen bg-cream font-nunito relative overflow-x-hidden">
-      {/* Ambient gradient background */}
-      <div className="bg-gradient-anim fixed inset-0 -z-10 pointer-events-none" />
+    <div style={{ minHeight: '100vh', position: 'relative', overflowX: 'hidden' }}>
+      <StarField />
 
       {/* Offline banner — only on /chat */}
       {!isOnline && location.pathname === '/chat' && (
-        <div className="fixed top-0 inset-x-0 z-50 bg-danger text-white text-center py-2 text-sm font-semibold">
+        <div className="fixed top-0 inset-x-0 z-50 text-white text-center py-2 text-sm font-semibold" style={{ background: '#ef4444' }}>
           {tr('chat_offline')}
         </div>
       )}
@@ -53,11 +57,15 @@ function AppShell() {
       {/* Animated routes */}
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
-          <Route path="/"        element={<Home    lang={lang} tr={tr} />} />
-          <Route path="/chat"    element={<Chat    lang={lang} tr={tr} isOnline={isOnline} />} />
-          <Route path="/breathe" element={<Breathe lang={lang} tr={tr} />} />
-          <Route path="/learn"   element={<Learn   lang={lang} tr={tr} />} />
-          <Route path="/help"    element={<Help    lang={lang} tr={tr} />} />
+          <Route path="/"         element={<Home     lang={lang} tr={tr} />} />
+          <Route path="/chat"     element={<Chat     lang={lang} tr={tr} isOnline={isOnline} />} />
+          <Route path="/breathe"  element={<Breathe  lang={lang} tr={tr} />} />
+          <Route path="/learn"    element={<Learn    lang={lang} tr={tr} />} />
+          <Route path="/help"     element={<Help     lang={lang} tr={tr} />} />
+          <Route path="/meditate" element={<Meditate lang={lang} tr={tr} />} />
+          <Route path="/journal"  element={<Journal  lang={lang} tr={tr} />} />
+          <Route path="/ground"   element={<Ground   lang={lang} tr={tr} />} />
+          <Route path="/badges"   element={<Badges   lang={lang} tr={tr} />} />
         </Routes>
       </AnimatePresence>
 
@@ -68,7 +76,7 @@ function AppShell() {
 }
 
 export default function App() {
-  const [showSplash, setShowSplash] = useState(() => !storage.hasSplashSeen())
+  const [showSplash, setShowSplash] = useState(true)
 
   return (
     <BrowserRouter>
