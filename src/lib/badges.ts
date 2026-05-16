@@ -11,6 +11,7 @@ export const ALL_BADGES: Badge[] = [
   { id: 'ground_1',      emoji: '🌿', name: 'Grounded',          description: 'Complete grounding exercise' },
   { id: 'journal_note',  emoji: '📝', name: 'Inner Voice',       description: 'Add first journal note' },
   { id: 'chat_1',        emoji: '💬', name: 'Open Up',           description: 'First chat with Manu' },
+  { id: 'story_seeker', emoji: '📖', name: 'Story Seeker',       description: 'Read 3 stories' },
 ]
 
 function get<T>(key: string, fallback: T): T {
@@ -55,6 +56,7 @@ interface CheckContext {
   groundCount?: number
   chatCount?: number
   hasJournalNote?: boolean
+  storiesCount?: number
 }
 
 export function checkAndUnlockBadges(ctx: CheckContext): string[] {
@@ -77,6 +79,7 @@ export function checkAndUnlockBadges(ctx: CheckContext): string[] {
   tryUnlock('ground_1',     (ctx.groundCount ?? 0) >= 1)
   tryUnlock('journal_note', ctx.hasJournalNote === true)
   tryUnlock('chat_1',       (ctx.chatCount ?? 0) >= 1)
+  tryUnlock('story_seeker', (ctx.storiesCount ?? 0) >= 3)
 
   return newlyUnlocked
 }

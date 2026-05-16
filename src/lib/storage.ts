@@ -11,6 +11,7 @@ const KEYS = {
   MEDITATE_CNT:  'sukoon_meditate_count',
   GROUND_CNT:    'sukoon_ground_count',
   CHAT_CNT:      'sukoon_chat_count',
+  STORIES_CNT:   'sukoon_stories_read',
 } as const
 
 function get<T>(key: string, fallback: T): T {
@@ -102,4 +103,7 @@ export const storage = {
 
   getGroundCount: (): number => get(KEYS.GROUND_CNT, 0),
   incrementGroundCount: (): void => set(KEYS.GROUND_CNT, get<number>(KEYS.GROUND_CNT, 0) + 1),
+
+  getStoriesCount: (): number => get(KEYS.STORIES_CNT, 0),
+  incrementStoriesCount: (): void => set(KEYS.STORIES_CNT, get<number>(KEYS.STORIES_CNT, 0) + 1),
 }

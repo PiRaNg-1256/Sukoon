@@ -1,5 +1,5 @@
 export type Mood = 'sad' | 'anxious' | 'neutral' | 'good' | 'happy'
-export type Lang = 'hi' | 'en'
+export type Lang = 'hi' | 'en' | 'ta' | 'te' | 'bn' | 'mr'
 export type BreathPreset = 'sleep' | 'anxiety' | 'calm'
 export type BreathPhase = 'idle' | 'inhale' | 'hold' | 'exhale'
 

@@ -15,7 +15,7 @@ import type { Tr } from '../translations'
 
 interface Props { lang: Lang; tr: Tr; isOnline: boolean }
 
-export default function Chat({ tr, isOnline }: Props) {
+export default function Chat({ lang, tr, isOnline }: Props) {
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
     const saved = storage.getChatHistory()
     if (saved.length === 0) {
@@ -46,7 +46,7 @@ export default function Chat({ tr, isOnline }: Props) {
     setPhqScore(prev => prev + delta)
     setLoading(true)
     try {
-      const reply = await sendToGroq(newMessages)
+      const reply = await sendToGroq(newMessages, lang)
       const assistantMsg: ChatMessage = { role: 'assistant', content: reply, timestamp: Date.now() }
       setMessages(prev => [...prev, assistantMsg])
       storage.addChatMessage(assistantMsg)

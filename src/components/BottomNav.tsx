@@ -16,7 +16,7 @@ const NAV_RIGHT = [
 
 const HUB_TILES = [
   { path: '/meditate', emoji: '🧘', label: 'Meditate',    disabled: false },
-  { path: '/sleep',    emoji: '🌙', label: 'Sleep Story', disabled: true  },
+  { path: '/stories',  emoji: '🌙', label: 'Sleep Story', disabled: false },
   { path: '/breathe',  emoji: '🌬️', label: 'Breathe',    disabled: false },
   { path: '/ground',   emoji: '🌿', label: 'Grounding',   disabled: false },
   { path: '/badges',   emoji: '🏆', label: 'Badges',      disabled: false },

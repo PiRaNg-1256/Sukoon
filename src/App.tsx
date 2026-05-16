@@ -14,6 +14,7 @@ import Meditate from './screens/Meditate'
 import Journal from './screens/Journal'
 import Ground from './screens/Ground'
 import Badges from './screens/Badges'
+import Stories from './screens/Stories'
 import { storage } from './lib/storage'
 import { t } from './translations'
 import type { Lang } from './types'
@@ -51,7 +52,7 @@ function AppShell() {
 
       {/* Language toggle */}
       <div className="fixed top-4 right-4 z-40">
-        <LangToggle lang={lang} setLang={setLang} tr={tr} />
+        <LangToggle lang={lang} setLang={setLang} />
       </div>
 
       {/* Animated routes */}
@@ -66,6 +67,7 @@ function AppShell() {
           <Route path="/journal"  element={<Journal  lang={lang} tr={tr} />} />
           <Route path="/ground"   element={<Ground   lang={lang} tr={tr} />} />
           <Route path="/badges"   element={<Badges   lang={lang} tr={tr} />} />
+          <Route path="/stories"  element={<Stories  lang={lang} tr={tr} />} />
         </Routes>
       </AnimatePresence>
 
