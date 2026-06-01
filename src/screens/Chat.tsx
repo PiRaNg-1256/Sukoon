@@ -59,7 +59,8 @@ export default function Chat({ lang, tr, isOnline }: Props) {
         groundCount: storage.getGroundCount(),
         chatCount: storage.getChatCount(),
       })
-    } catch {
+    } catch (err) {
+      console.error('[Groq error]', err)
       const errorMsg: ChatMessage = { role: 'assistant', content: 'माफ करना, कुछ गड़बड़ हो गई। थोड़ी देर बाद फिर कोशिश करो।', timestamp: Date.now() }
       setMessages(prev => [...prev, errorMsg])
     } finally {
